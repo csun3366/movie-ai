@@ -36,7 +36,7 @@ def get_article_content(article_url):
     soup = BeautifulSoup(res.text, 'html.parser')
     main_content = soup.find(id='main-content')
     # 移除 meta info 和推文
-    for tag in main_content.find_all(['div', 'span'], class_=['article-metaline', 'article-metaline-right', 'push']):
+    for tag in main_content.find_all(['div', 'span'], class_=['article-metaline', 'article-metaline-right']):
         tag.decompose()
     content_text = main_content.text.strip()
     return content_text
@@ -59,7 +59,7 @@ def fetch_ptt_movie_articles(keyword, max_articles=MAX_ARTICLES):
                 # 適時印出
                 print(f"\n[{count}] {res['title']}")
                 print(f"文章網址: {res['link']}")
-                print(f"內容摘錄:\n{content[:300]}...\n{'-'*50}")
+                #print(f"內容摘錄:\n{content[:300]}...\n{'-'*50}")
                 time.sleep(0.5)
             except Exception as e:
                 print(f"抓取文章失敗: {res['link']}，原因: {e}")

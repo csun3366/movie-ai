@@ -42,12 +42,13 @@ def summarize_review(request):
         movie_name = data.get('movie_name')
 
         articles = fetch_ptt_movie_articles(movie_name)
-
+        if not articles:
+            return JsonResponse({'summary': "無法取得相關文章"})
         # 整理評論文字
-        prompt = f"請根據收集到的 Google 評論，幫我總結「{movie_name}」的評價，幫我分別整理出這部電影在 主題與劇情、表演亮點、技術層面、情感共鳴 方面的優點與缺點，每項都要列出具體事例或說法，要用繁體中文評論，格式要是:💡 主題與劇情，🎭 表演亮點，📸 技術層面，❤️ 情感共鳴，請不要使用 ** 或 Markdown 粗體符號，直接用純文字輸出分類標題與說明\n\n"
+        prompt = f"請根據收集到的 Google 評論，幫我總結「{movie_name}」的評價，幫我分別整理出這部電影在 主題與劇情 角色與表演 情感共鳴 導演風格與敘事手法 攝影與美術設計 音效與配樂 剪輯與節奏 方面的優點與缺點，每項都要列出具體事例或說法，要用繁體中文評論，格式要是:💡 主題與劇情，🎭 角色與表演， ❤️情感共鳴，🎥 導演風格與敘事手法，📷 攝影與美術設計，🎼 音效與配樂，✏️ 剪輯與節奏，優缺點也以以下格式呈現:✅優點 ❌ 缺點，請不要使用 ** 或 Markdown 粗體符號，直接用純文字輸出分類標題與說明\n\n"
         for article in articles:
             prompt += f"- {article}\n"
-        print(prompt)
+
         # 步驟 3: 傳送給 OpenAI 進行摘要
         messages=[
             {"role": "system", "content": "你是一個中文評論分析專家"},
